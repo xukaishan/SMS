@@ -1,6 +1,6 @@
 <template>
-    <div class="goodsmanagepage">
-        我是商品管理页面
+    <div class="nav">
+        this is nav
     </div>
 </template>
 
