@@ -5,17 +5,12 @@
 </template>
 
 <script>
-// //引入login.vue
-// import Login from '@/views/Login/Login';
-// //引入index.vue
-// import Index from '@/views/Index/Index';
+
 
 export default {
-    // component:{Login,Index}
+
 }
 </script>
-
-
 
 
 <style lang="less">

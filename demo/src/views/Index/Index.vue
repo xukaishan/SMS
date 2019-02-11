@@ -7,7 +7,7 @@
         <!-- 右侧头部 -->
         <el-header><Top></Top></el-header>
         <!-- 右侧中间内容 -->
-        <el-main>Main<!-- 路由出口 --><router-view/></el-main>
+        <el-main><!-- 路由出口 --><router-view/></el-main>
         <!-- 右侧底部 -->
         <el-footer><Bottom></Bottom></el-footer>
       </el-container>
@@ -34,22 +34,25 @@ export default {
 .el-container{
     height: 100%;
     .el-aside {
-        background-color: #D3DCE6;
+        background-color: #2d3a4b;
         color: #333;
         text-align: center;
         line-height: 200px;
     }
     .rig_container{
-        .el-header, .el-footer {
-            background-color: #B3C0D1;
+        .el-header {
+            background-color: #242F42;
+            color: #fff;
+            line-height: 60px;
+        }
+        .el-footer {
+            background-color: #f3f3f3;
             color: #333;
-            text-align: center;
             line-height: 60px;
         }
         .el-main {
             background-color: #E9EEF3;
             color: #333;
-            text-align: center;
             line-height: 160px;
         }
     }

@@ -15,7 +15,9 @@
         <el-form-item prop="Account">
           <el-input v-model="loginForm.Account" placeholder="用户名/邮箱/手机号">
             <template slot="prepend">
-              <i class="el-icon-menu"></i>
+              <!-- <i class="el-icon-menu"></i> -->
+              <!-- 这里使用阿里项目中的图标 -->
+              <i class="iconfont icon-xks-user"></i>
             </template>
           </el-input>
         </el-form-item>
@@ -23,7 +25,7 @@
         <el-form-item prop="pass">
           <el-input type="password" v-model="loginForm.pass" autocomplete="off" placeholder="密码">
             <template slot="prepend">
-              <i class="el-icon-goods"></i>
+              <i class="iconfont icon-xks-lock"></i>
             </template>
           </el-input>
         </el-form-item>
@@ -37,7 +39,7 @@
             placeholder="确认密码"
           >
             <template slot="prepend">
-              <i class="el-icon-goods"></i>
+              <i class="iconfont icon-xks-lock"></i>
             </template>
           </el-input>
         </el-form-item>
@@ -79,7 +81,7 @@ export default {
     const validatePass = (rule, value, callback) => {
       var regpwd =/^.*(?=.{6,})(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*? ]).*$/;
       if(!value){
-        callback(new Error("密码不能为空"))
+        callback(new Error("密码不能为空"));
       }else if(!regpwd.test(value)){
         callback(new Error("最少6位，包括至少1个大写字母、小写字母、数字、特殊字符"))
       }else{
@@ -88,7 +90,7 @@ export default {
           this.$refs.loginForm.validateField("checkPass"); // 调用确认密码的验证（一致性验证）validateField对部分表单进行验证
         }
         //成功的回调
-        callback()
+        callback();
       }
     };
     //确认密码

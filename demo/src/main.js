@@ -6,6 +6,8 @@ import App from './App.vue';
 import router from './router';
 // 引入公用样式
 import '@/styles/common.less';
+// 引入图标样式
+import '@/styles/icon.less';
 
 //使用相关组件
 Vue.use(ElementUI);
