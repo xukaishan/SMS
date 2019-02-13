@@ -7,10 +7,14 @@ export default {};
 </script>
 
 <style lang="less">
-.bottom {
-  border-top: 1px solid #ccc;
-  text-align: left;
-  color: #2d3a4b;
-  font-size: 12px;
+.el-footer {
+  line-height: 58px!important;
+  .bottom {
+    border-top: 1px solid #ccc;
+    text-align: left;
+    color: #2d3a4b;
+    font-size: 12px;
+    box-sizing: content-box;
+  }
 }
 </style>

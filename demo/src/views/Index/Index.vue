@@ -33,11 +33,13 @@ export default {
 <style lang="less">
 .el-container{
     height: 100%;
+    
     .el-aside {
         background-color: #2d3a4b;
         color: #333;
         text-align: center;
         line-height: 200px;
+        height: 100%;
     }
     .rig_container{
         .el-header {
@@ -48,12 +50,16 @@ export default {
         .el-footer {
             background-color: #f3f3f3;
             color: #333;
-            line-height: 60px;
+            // line-height: 60px;
         }
         .el-main {
             background-color: #E9EEF3;
             color: #333;
-            line-height: 160px;
+            // line-height: 160px;
+            .el-card__header{
+                font-weight: 800;
+                background-color: #f4f4f5
+            }
         }
     }
 }

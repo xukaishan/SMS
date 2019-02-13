@@ -37,7 +37,7 @@ export default {
                     {
                       index:"/AddClassification",
                       title:"添加分类"  
-                    },
+                    }
                 ]              
               },
               {
@@ -52,7 +52,7 @@ export default {
                     {
                       index:"/AddGoods",
                       title:"添加商品"  
-                    },
+                    }
                 ]              
               },
               {
@@ -67,7 +67,7 @@ export default {
                     {
                       index:"/AddInventory",
                       title:"添加库存"  
-                    },
+                    }
                 ]              
               },
               {
@@ -86,11 +86,27 @@ export default {
                     {
                       index:"/ReturnGoods",
                       title:"商品退货"  
-                    },
+                    }
                 ]              
               },
               {
                 index:"5",
+                icon:"icon-xks-tubiaozhexiantu",
+                title:"统计管理",
+                subitems:[
+                    {
+                      index:"/SalesStatistics",
+                      title:"销售统计"  
+                    },
+                    {
+                      index:"/ShipmentStatistics",
+                      title:"进货统计"  
+                    },
+                    
+                ]              
+              },
+              {
+                index:"6",
                 icon:"icon-xks-team",
                 title:"账号管理",
                 subitems:[
@@ -109,7 +125,7 @@ export default {
                 ]              
               },
               {
-                index:"6",
+                index:"7",
                 icon:"el-icon-news",
                 title:"会员管理",
                 subitems:[
@@ -124,7 +140,7 @@ export default {
                 ]              
               },
               {
-                index:"7",
+                index:"8",
                 icon:"icon-xks-setting",
                 title:"系统管理",
                 subitems:[
@@ -146,10 +162,6 @@ export default {
                     },
                 ]              
               }
-              
-
-
-
 
           ]
       }

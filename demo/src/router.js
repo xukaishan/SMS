@@ -90,6 +90,14 @@ export default new Router({
           component:()=>import('./views/SalesList/SalesList.vue')
         },
         {
+          path:'/SalesStatistics',
+          component:()=>import('./views/SalesStatistics/SalesStatistics.vue')
+        },
+        {
+          path:'/ShipmentStatistics',
+          component:()=>import('./views/ShipmentStatistics/ShipmentStatistics.vue')
+        },
+        {
           path:'/SystemConfig',
           component:()=>import('./views/SystemConfig/SystemConfig.vue')
         },
