@@ -63,6 +63,7 @@ export default {
       dataUrl: "/AccountManageTableData.json",
       currentPage: 1,
       tableData: [
+        
         {
           username: "李寻欢",
           usergroup: "超级管理员",

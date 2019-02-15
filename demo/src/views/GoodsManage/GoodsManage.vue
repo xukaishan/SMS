@@ -64,7 +64,7 @@ export default {
         },
         {
           barcode: "12365789651",
-          goodsname: "肥仔快水",
+          goodsname: "肥仔快乐水",
           classify: "饮料",
           price: "3.00",
           promotionalprice: "2.88",
