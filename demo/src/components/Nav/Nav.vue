@@ -1,9 +1,10 @@
 <template>
   <el-menu
-    default-active="this.$route.path"
+    :default-active="this.$route.path"
     class="el-menu-vertical-demo"
     @open="handleOpen"
     @close="handleClose"
+    @select='selectmenu'
     background-color="#2d3a4b"
     text-color="#fff"
     active-text-color="rgb(64, 158, 255)"
@@ -167,11 +168,14 @@ export default {
       }
   },  
   methods: {
+    selectmenu(index,indexPath){
+      // console.log(index,indexPath);
+    },
     handleOpen(key, keyPath) {
-      console.log(key, keyPath);
+      // console.log(key, keyPath); 
     },
     handleClose(key, keyPath) {
-      console.log(key, keyPath);
+      // console.log(key, keyPath);
     }
   }
 };

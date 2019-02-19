@@ -6,6 +6,26 @@
         <span>商品管理</span>
       </div>
       <div class="text item">
+        <!-- 功能条 -->
+        <div class="toolsbox">
+          <el-select v-model="value" placeholder="--请选择分类--" size="small">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+          <span class="ser_fontsize">关键字：</span>
+          <el-input
+            placeholder="商品名称/条形码"
+            class="serch-inp"
+            size="small"
+            v-model.trim="search_words"
+            @change="searchchange"
+          ></el-input>
+          <el-button type="primary" @click="search" size="small" icon="el-icon-search">搜索</el-button>
+        </div>
         <!-- 表格内容 -->
         <el-table
           ref="multipleTable"
@@ -13,8 +33,8 @@
           tooltip-effect="dark"
           style="width: 100%"
         >
-          <el-table-column prop="barcode" label="商品条形码" min-width='120px'></el-table-column>
-          <el-table-column prop="goodsname" label="商品名称" min-width='130px'></el-table-column>
+          <el-table-column prop="barcode" label="商品条形码" min-width="120px"></el-table-column>
+          <el-table-column prop="goodsname" label="商品名称" min-width="130px"></el-table-column>
           <el-table-column prop="classify" label="所属分类"></el-table-column>
           <el-table-column prop="price" label="售价"></el-table-column>
           <el-table-column prop="promotionalprice" label="促销价"></el-table-column>
@@ -22,7 +42,7 @@
           <el-table-column prop="stock" label="库存"></el-table-column>
           <el-table-column prop="stockvalue" label="库存总额"></el-table-column>
           <el-table-column prop="salesvalue" label="销售总额"></el-table-column>
-          <el-table-column label="管理" width='200px'>
+          <el-table-column label="管理" width="200px">
             <template slot-scope="scope">
               <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
               <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
@@ -35,10 +55,10 @@
           @current-change="handleCurrentChange"
           :current-page="currentPage"
           :page-sizes="[5, 10, 20, 30, 50]"
-          :page-size="100"
+          :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           background
-          :total="goodsData.length"
+          :total="total"
         ></el-pagination>
       </div>
     </el-card>
@@ -49,7 +69,12 @@
 export default {
   data() {
     return {
-      currentPage:1,
+      search_words: "",
+      is_search: false,
+      dataUrl: "",
+      currentPage: 1,
+      pageSize: 3,
+      total: 10,
       goodsData: [
         {
           barcode: "69865789651",
@@ -60,7 +85,7 @@ export default {
           marketvalue: "4.20",
           stock: "98",
           stockvalue: "231",
-          salesvalue: "420" 
+          salesvalue: "420"
         },
         {
           barcode: "12365789651",
@@ -71,7 +96,7 @@ export default {
           marketvalue: "3.20",
           stock: "98",
           stockvalue: "231",
-          salesvalue: "420" 
+          salesvalue: "420"
         },
         {
           barcode: "698644456321",
@@ -82,7 +107,7 @@ export default {
           marketvalue: "0.5",
           stock: "65",
           stockvalue: "146",
-          salesvalue: "410" 
+          salesvalue: "410"
         },
         {
           barcode: "698658954522",
@@ -93,7 +118,7 @@ export default {
           marketvalue: "6.20",
           stock: "78",
           stockvalue: "495",
-          salesvalue: "980" 
+          salesvalue: "980"
         },
         {
           barcode: "69869875651",
@@ -104,7 +129,7 @@ export default {
           marketvalue: "4.20",
           stock: "98",
           stockvalue: "231",
-          salesvalue: "420" 
+          salesvalue: "420"
         },
         {
           barcode: "69230189651",
@@ -115,19 +140,61 @@ export default {
           marketvalue: "4.20",
           stock: "23",
           stockvalue: "21",
-          salesvalue: "40" 
+          salesvalue: "40"
         }
-      ]
+      ],
+      //分类选择
+      options: [
+        {
+          value: "女装/男装/童装",
+          label: "女装/男装/童装"
+        },
+        {
+          value: "食品/零食/生鲜",
+          label: "食品/零食/生鲜"
+        },
+        {
+          value: "数码/家电/手机",
+          label: "数码/家电/手机"
+        },
+        {
+          value: "百货/家居/厨房",
+          label: "百货/家居/厨房"
+        },
+        {
+          value: "美妆/洗护/用品",
+          label: "美妆/洗护/用品"
+        }
+      ],
+      value: ""
     };
   },
+  //计算属性===========================================================
   computed: {
     computeddata() {
-        return this.goodsData.filter((v)=>{
-            return v
-        })
+      return this.goodsData.filter(v => {
+        return v;
+      });
     }
   },
+  //生命周期钩子函数========================================================
+  created() {},
+  //方法===========================================================
   methods: {
+    //获取商品数据
+    getData() {},
+    //搜索========================================================
+    search() {
+      //改变标杆，用于判断是否过滤表格数据
+      this.is_search = true;
+      this.getData();
+    },
+    searchchange() {
+      if (!this.search_words) {
+        this.getData();
+      }
+    },
+
     // 每一行的编辑和删除
     handleEdit(index, row) {
       console.log(index, row);
@@ -147,5 +214,43 @@ export default {
 };
 </script>
 
+
+
+
 <style lang="less">
+.goodsmanagepage {
+  .el-card {
+    .el-card__header {
+    }
+    .el-card__body {
+      .text {
+        .toolsbox {
+          padding-bottom: 10px;
+          .el-select {
+            margin-right: 16px;
+            .el-input {
+              width: 150px;
+              .el-input__inner {
+              }
+            }
+          }
+          .ser_fontsize {
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 500;
+          }
+          .serch-inp {
+            width: 200px;
+            margin-right: 10px;
+          }
+        }
+        .el-table {
+        }
+        .el-pagination {
+          padding-top: 20px;
+        }
+      }
+    }
+  }
+}
 </style>

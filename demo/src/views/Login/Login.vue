@@ -46,7 +46,7 @@
 
         <!-- 提交和重置 -->
         <el-form-item>
-          <el-button type="primary" @click="submitForm('loginForm')">提交</el-button>
+          <el-button type="primary" @click="submitForm('loginForm')">登录</el-button>
           <el-button @click="resetForm('loginForm')">重置</el-button>
         </el-form-item>
       </el-form>
@@ -57,35 +57,41 @@
 <script>
 export default {
   data() {
-    // 验证账号自定义规则 汉字字母数字下划线(5-16位)/^[a-zA-Z_0-9\u4e00-\u9fa5]{5,16}$/  
+    // 验证账号自定义规则 汉字字母数字下划线(5-16位)/^[a-zA-Z_0-9\u4e00-\u9fa5]{5,16}$/
     // 邮箱 /^([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+(\.[a-zA-Z]{2,3})+$/
-    //电话号码：/^[1][358][0-9]{9}$或^[1][358]\d{9}$/ 
+    //电话号码：/^[1][358][0-9]{9}$或^[1][358]\d{9}$/
     const checkAccount = (rule, value, callback) => {
-      var regname=/^[a-zA-Z_0-9\u4e00-\u9fa5]{5,16}$/;
-      var regmail=/^([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+(\.[a-zA-Z]{2,3})+$/;
-      var regphone=/^[1][358]\d{9}$/;
-      if(!value){
-       return callback(new Error("账号不能为空"))
-      }else if(regname.test(value)){
-        callback()//不传入参数代表成功的回调
-      }else if(regmail.test(value)){
-        callback()
-      }else if(regphone.test(value)){
-        callback()
-      }else{
-        callback(new Error("请输入正确的用户名（汉字字母数字下划线(5-16位)、邮箱、手机号）"))
+      var regname = /^[a-zA-Z_0-9\u4e00-\u9fa5]{5,16}$/;
+      var regmail = /^([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+(\.[a-zA-Z]{2,3})+$/;
+      var regphone = /^[1][358]\d{9}$/;
+      if (!value) {
+        return callback(new Error("账号不能为空"));
+      } else if (regname.test(value)) {
+        callback(); //不传入参数代表成功的回调
+      } else if (regmail.test(value)) {
+        callback();
+      } else if (regphone.test(value)) {
+        callback();
+      } else {
+        callback(
+          new Error(
+            "请输入正确的用户名（汉字字母数字下划线5-16位、邮箱、手机号）"
+          )
+        );
       }
     };
 
     //密码最少6位，包括至少1个大写字母，1个小写字母，1个数字，1个特殊字符
     const validatePass = (rule, value, callback) => {
-      var regpwd =/^.*(?=.{6,})(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*? ]).*$/;
-      if(!value){
+      var regpwd = /^.*(?=.{6,})(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*? ]).*$/;
+      if (!value) {
         callback(new Error("密码不能为空"));
-      }else if(!regpwd.test(value)){
-        callback(new Error("最少6位，包括至少1个大写字母、小写字母、数字、特殊字符"))
-      }else{
-        if(this.loginForm.checkPass !== ""){
+      } else if (!regpwd.test(value)) {
+        callback(
+          new Error("最少6位，包括至少1个大写字母、小写字母、数字、特殊字符")
+        );
+      } else {
+        if (this.loginForm.checkPass !== "") {
           // 如果确认密码不为空
           this.$refs.loginForm.validateField("checkPass"); // 调用确认密码的验证（一致性验证）validateField对部分表单进行验证
         }
@@ -95,25 +101,23 @@ export default {
     };
     //确认密码
     var validateCheckPass = (rule, value, callback) => {
-      if(!value){
-        callback(new Error("请再次输入密码"))
-      }else if(value !== this.loginForm.pass){
-        callback(new Error("密码不一致"))
+      if (!value) {
+        callback(new Error("请再次输入密码"));
+      } else if (value !== this.loginForm.pass) {
+        callback(new Error("密码不一致"));
       }
-      callback()
+      callback();
     };
     return {
       //表单数据
       loginForm: {
-        Account: "",//键值对，为数组
+        Account: "", //键值对，为数组
         pass: "",
-        checkPass: "",
+        checkPass: ""
       },
       //表单数据的规则
       loginRules: {
-        Account: [
-          { validator: checkAccount, trigger: "blur" },
-        ],
+        Account: [{ validator: checkAccount, trigger: "blur" }],
         pass: [{ validator: validatePass, trigger: "blur" }],
         checkPass: [{ validator: validateCheckPass, trigger: "blur" }]
       }
@@ -122,20 +126,37 @@ export default {
   methods: {
     //登录
     submitForm(formName) {
-      this.$refs[formName].validate(valid => {//validate对整个表单进行校验的方法，参数为一个回调函数。该回调函数会在校验结束后被调用,并传入两个参数：是否校验成功和未通过校验的字段。若不传入回调函数，则会返回一个 promise                                     
-        if (valid) {  // 如果所有验证通过 valid就是true                         
-          alert("登录成功");
+      this.$refs[formName].validate(valid => {
+        //validate对整个表单进行校验的方法，参数为一个回调函数。该回调函数会在校验结束后被调用,并传入两个参数：是否校验成功和未通过校验的字段。若不传入回调函数，则会返回一个 promise
+        if (valid) {
+          // 如果所有验证通过 valid就是true
           //收集用户输入的数据，发送给后台
-          let loginInfo={
-              Account: this.loginForm.Account,
-              pass: this.loginForm.pass,
+          let loginInfo = {
+            username: this.loginForm.Account,
+            password: this.loginForm.pass
           };
-          console.log(loginInfo)
-          //登录成功跳转到管理系统主页
-          this.$router.push("/Index")
-
+          // console.log(loginInfo)
+          this.$axios
+            .post(
+              "http://127.0.0.1:666/login/accountlogin",
+              this.$qs.stringify(loginInfo)
+            )
+            .then(res => {
+              let { error_code, reason, token, username } = res.data;
+              if (error_code === 0 && token) {
+                window.localStorage.setItem("accountinfotoken", token); //将token 存储在本地后续以便验证是否登录过
+                window.localStorage.setItem("username", username); //将username 存储在本地
+                this.$message.success(reason);
+                this.$router.push("/Index");
+              } else {
+                this.$message.error(reason);
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
         } else {
-          alert("登录失败，请重新登录");
+          this.$message.error("登录失败，请重新登录");
           return false;
         }
       });

@@ -11,7 +11,13 @@
           <el-button @click="toggleSelection()" size="small" type="primary">取消选择</el-button>
           <el-button @click="addUser" size="small" type="primary">添加账号</el-button>
           <el-button @click="batchDeletion" size="small" type="primary">批量删除</el-button>
-          <el-input placeholder="筛选 用户名称/用户组/创建日期" class="serch-inp" size="small" v-model="search_words"></el-input>
+          <el-input
+            placeholder="筛选 用户名称/用户组/创建日期"
+            class="serch-inp"
+            size="small"
+            v-model="search_words"
+            @change="searchchange"
+          ></el-input>
           <el-button type="primary" @click="search" size="small" icon="el-icon-search">搜索</el-button>
         </div>
         <!-- 表格内容 -->
@@ -28,26 +34,54 @@
             prop="usergroup"
             label="用户组"
             :filter-method="filterHandler"
-            :filters="[{ text: '普通用户', value: '普通用户' }, { text: '超级管理员', value: '超级管理员' }]"
+            :filters="[{ text: '普通用户', value: '普通用户' }, { text: '高级管理员', value: '高级管理员' }]"
           ></el-table-column>
-          <el-table-column prop="addate" label="创建日期" sortable></el-table-column>
+          <el-table-column label="创建日期">
+            <template slot-scope="scope">{{ scope.row.ctime | filterCtime }}</template>
+          </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+              <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+              <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
+        <!-- 弹出编辑表单 -->
+        <el-dialog title="账号编辑" :visible.sync="flag" width="400px">
+          <el-form
+            :model="accounteditForm"
+            status-icon
+            :rules="rules"
+            ref="editForm"
+            class="demo-ruleForm"
+            size="small"
+            label-position="top"
+          >
+            <el-form-item label="账号:" prop="username" style="width:200px">
+              <el-input v-model="accounteditForm.username" placeholder="用户名/邮箱/手机号"></el-input>
+            </el-form-item>
+            <el-form-item label="选择用户组:" prop="usergroup">
+              <el-select v-model="accounteditForm.usergroup" placeholder="请选择用户组">
+                <el-option label="普通用户" value="普通用户"></el-option>
+                <el-option label="高级管理员" value="高级管理员"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="canceledit" size="small">取 消</el-button>
+            <el-button type="primary" @click="saveedit('editForm')" size="small">确 定</el-button>
+          </div>
+        </el-dialog>
         <!-- 分页 -->
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
-          :page-sizes="[5, 10, 20, 30, 50]"
-          :page-size="100"
+          :page-sizes="[3, 5, 10, 30, 50]"
+          :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           background
-          :total="tableData.length"
+          :total="total"
         ></el-pagination>
       </div>
     </el-card>
@@ -55,166 +89,298 @@
 </template>
 
 <script>
+// 引入moment
+import moment from "moment";
+
 export default {
   data() {
+    //账号编辑验证
+    const checkAccount = (rule, value, callback) => {
+      var regname = /^[a-zA-Z_0-9\u4e00-\u9fa5]{5,16}$/;
+      var regmail = /^([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+(\.[a-zA-Z]{2,3})+$/;
+      var regphone = /^[1][358]\d{9}$/;
+      if (!value) {
+        return callback(new Error("账号不能为空"));
+      } else if (regname.test(value)) {
+        callback(); //不传入参数代表成功的回调
+      } else if (regmail.test(value)) {
+        callback();
+      } else if (regphone.test(value)) {
+        callback();
+      } else {
+        callback(
+          new Error(
+            "请输入正确的用户名（汉字字母数字下划线5-16位、邮箱、手机号）"
+          )
+        );
+      }
+    };
     return {
       search_words: "",
-      is_search:false,
-      dataUrl: "/AccountManageTableData.json",
+      is_search: false,
+      dataUrl: "",
       currentPage: 1,
-      tableData: [
-        
-        {
-          username: "李寻欢",
-          usergroup: "超级管理员",
-          addate: "2016-10-12"
-        },
-        {
-          username: "貂蝉",
-          usergroup: "超级管理员",
-          addate: "2018-07-22"
-        },
-        {
-          username: "萧十一郎",
-          usergroup: "普通用户",
-          addate: "2015-01-03"
-        },
-        {
-          username: "李莫愁",
-          usergroup: "超级管理员",
-          addate: "2019-02-12"
-        },
-        {
-          username: "杨过",
-          usergroup: "普通用户",
-          addate: "2016-12-30"
-        },
-        {
-          username: "杨过",
-          usergroup: "普通用户",
-          addate: "2016-12-30"
-        },
-        {
-          username: "杨过",
-          usergroup: "普通用户",
-          addate: "2016-12-30"
-        },
-        {
-          username: "杨过",
-          usergroup: "普通用户",
-          addate: "2016-12-30"
-        },
-        {
-          username: "杨过",
-          usergroup: "普通用户",
-          addate: "2016-12-30"
-        },
-        {
-          username: "杨过",
-          usergroup: "普通用户",
-          addate: "2016-12-30"
-        },
-        {
-          username: "尹志平",
-          usergroup: "超级管理员",
-          addate: "2018-09-24"
-        }
-      ],
+      pageSize: 5,
+      total: 0,
+      tableData: [],
       //多选数组，包含多选选中的每一项
-      multipleSelection: []
+      multipleSelection: [],
+      //编辑
+      flag: false,
+      //编辑表单数据
+      accounteditForm: {
+        id: "",
+        username: "",
+        usergroup: ""
+      },
+
+      //编辑表单数据的规则
+      rules: {
+        username: [{ validator: checkAccount, trigger: "blur" }]
+      }
     };
   },
+
+  //生命周期钩子函数========================================================
   created() {
     this.getData();
   },
-  //计算属性，计算过滤处理表格数据，以重新渲染页面，如搜索及分页
+
+  //计算属性
   computed: {
+    computeddataUrl() {
+      if (this.search_words && this.is_search) {
+        this.dataUrl = `http://127.0.0.1:666/account/AccountListByPage?pageSize=${
+          this.pageSize
+        }&currentPage=${this.currentPage}&search=${this.search_words}`;
+      } else {
+        this.dataUrl = `http://127.0.0.1:666/account/AccountListByPage?pageSize=${
+          this.pageSize
+        }&currentPage=${this.currentPage}`;
+      }
+      return this.dataUrl;
+    },
+
+    //前端过滤表格数据,之前是做的前端搜索，改为后端搜索
     computeddata() {
-      if (this.search_words&&this.is_search) {
-        return this.tableData.filter(item => {
-          if (
-            item.username.indexOf(this.search_words) > -1 ||
-            (item.usergroup.indexOf(this.search_words) > -1 ||
-              item.addate.indexOf(this.search_words) > -1)
-          ) {
-            return item;
-          }
-        });
-      }else{
-        return this.tableData
-      } 
+      // if (this.search_words && this.is_search) {
+      //   return this.tableData.filter(item => {
+      //     if (
+      //       item.username.indexOf(this.search_words) > -1 ||
+      //       (item.usergroup.indexOf(this.search_words) > -1 ||
+      //         item.ctime.indexOf(this.search_words) > -1)
+      //     ) {
+      //       return item;
+      //     }
+      //   });
+      // } else {
+      //   return this.tableData;
+      // }
+
+      return this.tableData;
     }
   },
   methods: {
-    //发送请求获取表格数据
+    //发送请求获取账号列表数据=========================================
     getData() {
-      // this.$axios.post(this.dataUrl, {
-      //   //发送给后台的数据
-      // }).then(res => {
-      //   this.tableData = res.data.list;
-      // });
-      // console.log(this);
+      this.$axios
+        .get(this.computeddataUrl)
+        .then(res => {
+          // console.log(res.data);
+          this.tableData = res.data.data;
+          this.total = res.data.total;
+          //解决删除每页最后一条数据不跳转到前一页的问题
+          if (!this.tableData.length && this.currentPage != 1) {
+            this.currentPage -= 1;
+            this.getData();
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
-    //功能栏
-    //反选
-    reverseElection(rows) {
-      let arr = [];
-      arr = arr.concat(rows);
-      //先选中所有
 
-      this.$refs.multipleTable.toggleRowSelection();
-      // console.log('多选数组1',this.multipleSelection);
-      arr.forEach(row => {
-        //遍历多选数组每一项，切换选中状态
-        this.$refs.multipleTable.toggleRowSelection(row);
-      });
-      // console.log('多选数组2',this.multipleSelection);
+    //功能栏
+    //反选============================================================
+    reverseElection(rows) {
+      this.$refs.multipleTable.toggleRowSelection(this.multipleSelection);
     },
-    //搜索
+
+    //搜索========================================================
     search() {
       //改变标杆，用于判断是否过滤表格数据
-      this.is_search=true;
+      this.is_search = true;
+      this.getData();
     },
-    //取消选择
+    searchchange() {
+      if (!this.search_words) {
+        this.getData();
+      }
+    },
+
+    //取消选择====================================================
     toggleSelection() {
       this.$refs.multipleTable.clearSelection();
     },
-    //多选响应
+
+    //多选响应=======================================================
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      console.log(this.multipleSelection);
+      // console.log(this.multipleSelection);
     },
-    //用户组筛选过滤
+
+    //用户组筛选过滤==================================================
     filterHandler(value, row, column) {
+      //value为选择的筛选条件,column['property']为筛选项，这里为usergroup,row[property]筛选项值
       const property = column["property"];
       return row[property] === value;
-      // console.log(value,"值");//value为选择的筛选条件
-      // console.log(column['property']);//为column['property']筛选项，这里为usergroup
-      // console.log(row[property]);//筛选项值
     },
-    //功能栏添加账号和批量删除
+
+    //功能栏添加账号=====================================================
     addUser() {
       //添加账号
       this.$router.push("/AddAccount");
     },
+
+    //批量删除===========================================================
     batchDeletion() {
-      //批量删除
-      this.multipleSelection = [];
+      //获取要批量删除的id集合
+      let delIdArr = this.multipleSelection.map(v => v.id);
+      //将数组转为字符串数组以方便post发送数组给后台
+      const delIdStr = JSON.stringify(delIdArr);
+      // console.log(delIdStr)
+
+      //弹出确定要删除的提示框
+      this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          //发送给后台id集合
+          this.$axios
+            .post(
+              "http://127.0.0.1:666/account/batchdelaccount",
+              this.$qs.stringify({ delIdStr })
+            )
+            .then(res => {
+              let { error_code, reason } = res.data;
+              if (error_code === 0) {
+                this.$message.success(reason);
+                //重新获取数据
+                this.getData();
+              } else {
+                this.$message.error(reason);
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     },
-    // 每一行的编辑和删除
-    handleEdit(index, row) {
-      console.log(index, row);
+    // 每一行的编辑=================================================
+    handleEdit(row) {
+      // 数据回填
+      this.accounteditForm.id = row.id;
+      this.accounteditForm.username = row.username;
+      this.accounteditForm.usergroup = row.usergroup;
+      //显示模态框
+      this.flag = true;
     },
-    handleDelete(index, row) {
-      console.log(index, row);
+    //取消编辑
+    canceledit() {
+      //隐藏模态框
+      this.flag = false;
     },
-    //分页
+
+    //保存编辑
+    saveedit(formname) {
+      this.$refs[formname].validate(valid => {
+        if (valid) {
+          //收集修改后的数据包括id发送给后台
+          this.$axios
+            .post(
+              "http://127.0.0.1:666/account/saveedit",
+              this.$qs.stringify(this.accounteditForm)
+            )
+            .then(res => {
+              let { error_code, reason } = res.data;
+              if (error_code === 0) {
+                //隐藏模态框
+                this.flag = false;
+                this.$message.success(reason);
+                //重新获取数据
+                this.getData();
+              } else {
+                this.$message.error(reason);
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        }
+      });
+    },
+
+    // 每一行的删除===============================================================
+    handleDelete(row) {
+      //获取要删除的行id
+      let id = row.id;
+      //弹出确定要删除的提示框
+      this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          //发送给后台
+          this.$axios
+            .get(`http://127.0.0.1:666/account/delaccount?id=${id}`)
+            .then(res => {
+              let { error_code, reason } = res.data;
+              if (error_code === 0) {
+                this.$message.success(reason);
+                //重新获取数据
+                this.getData();
+              } else {
+                this.$message.error(reason);
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+
+    //分页================================================================
+    //每页几条
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      this.pageSize = val;
+      this.getData();
     },
+    //当前页
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
       this.currentPage = val;
+      this.getData();
+    }
+  },
+  //过滤器===============================================================
+  filters: {
+    //创建时间的过滤函数
+    filterCtime(val) {
+      return moment(val).format("YYYY-MM-DD HH:mm:ss");
     }
   }
 };
@@ -237,6 +403,9 @@ export default {
           }
         }
         .el-table {
+        }
+        .el-dialog__body {
+          padding: 0 20px !important;
         }
         .el-pagination {
           text-align: right;

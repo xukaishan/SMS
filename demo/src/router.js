@@ -17,7 +17,7 @@ export default new Router({
     },
     {
       path: '/Index',
-      name: 'index',
+      // name: 'index',
       component: () => import('./views/Index/Index'),
       children:[
         {

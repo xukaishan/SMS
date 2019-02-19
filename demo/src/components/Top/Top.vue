@@ -23,11 +23,11 @@
                 <i class="el-icon-arrow-down el-icon-caret-bottom"></i>
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="/PersonalCenter">个人中心</el-dropdown-item>
-                <el-dropdown-item command="/MessageReminder">消息提醒</el-dropdown-item>
-                <el-dropdown-item command="/AboutUs">关于我们</el-dropdown-item>
-                <el-dropdown-item command="/set" disabled>权限设置</el-dropdown-item>
-                <el-dropdown-item command="/SignOut" divided>退出</el-dropdown-item>
+                <el-dropdown-item command="PersonalCenter">个人中心</el-dropdown-item>
+                <el-dropdown-item command="MessageReminder">消息提醒</el-dropdown-item>
+                <el-dropdown-item command="AboutUs">关于我们</el-dropdown-item>
+                <el-dropdown-item command="set" disabled>权限设置</el-dropdown-item>
+                <el-dropdown-item command="SignOut" divided>退出</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </el-col>
@@ -39,18 +39,22 @@
 
 <script>
 export default {
-  data(){
-    return{
-      username: "貂蝉",
-      avatarUrl: '/avater.jpg'
-    }
+  data() {
+    return {
+      username: "",
+      avatarUrl: "/avater.jpg"
+    };
+  },
+  created(){
+    this.username=window.localStorage.getItem('username')
   },
   methods: {
     handleCommand(command) {
-      alert(command);
-      
+      if (command === "SignOut") {
+        window.localStorage.removeItem("accountinfotoken");
+        this.$router.push('/Login')
+      }
     }
-    
   }
 };
 </script>
@@ -70,27 +74,32 @@ export default {
     .toprig {
       height: 100%;
       font-size: 14px;
-      .el-row{
-        .avater-col{
+      .el-row {
+        .avater-col {
           text-align: right;
           width: 120px;
-          .avatar{
+          .avatar {
             width: 40px;
             height: 40px;
             float: right;
             margin: 10px 10px 10px 20px;
             img {
-                  border-radius: 50%;
-                }
+              border-radius: 50%;
+            }
           }
         }
-        .user-col{
-           width: 70px;
+        .user-col {
+          width: 140px;
         }
       }
       .el-dropdown-link {
+        display: block;
         cursor: pointer;
         color: #fff;
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;//超出显示省略号
+        white-space: nowrap;//文本不换行
       }
     }
   }
