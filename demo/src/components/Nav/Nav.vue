@@ -16,7 +16,7 @@
             <i :class="item.icon"></i>
             <span>{{item.title}}</span>
         </template>
-        <el-menu-item :index="v.index" v-for="(v,k) in item.subitems" :key="k">{{v.title}}</el-menu-item>
+        <el-menu-item v-if="item.subitems && item.subitems.length" :index="v.index" v-for="(v,k) in item.subitems" :key="k">{{v.title}}</el-menu-item>
     </el-submenu>
   </el-menu>
 </template>

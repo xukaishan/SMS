@@ -66,14 +66,10 @@ export default {
           // 如果确认密码不为空
           this.$refs.pwdmodify.validateField("checkPass"); // 调用确认密码的验证（一致性验证）validateField对部分表单进行验证
         }
-        // console.log('我是规则',rule);
         if (rule.field === "oldpass") {
           //判断为旧密码失焦验证还是新密码失焦验证，旧密码验证就调用方法发后台验证
-          // this.pwdmodifyfn();
-          // console.log("我是", this.code);
-          // this.code === 1 ? callback(new Error("密码不存在")) : callback();
           this.pwdmodifyfn().then(v => {
-            v === 1 ? callback(new Error("密码不存在")) : callback();
+            v.error_code === 1 ? callback(new Error("密码不存在")) : callback();
           });
         } else if (this.pwdmodify.oldpass === this.pwdmodify.pass) {
           callback(new Error("新密码不能与旧密码一样"));
@@ -107,7 +103,6 @@ export default {
         pass: [{ validator: validatePass, trigger: "blur" }],
         checkPass: [{ validator: validateCheckPass, trigger: "blur" }]
       },
-      code: 100//修改密码的错误码
     };
   },
 
@@ -117,33 +112,13 @@ export default {
   methods: {
     //发送数据给后台
     pwdmodifyfn() {
-      let that = this; //axios中this不指向Vue实例
-      return new Promise((resolve, reject) => {
-        //Promise处理异步
-        this.$axios
+      // let that = this; //axios中this不指向Vue实例，保存this
+      return this.$http
           .post(
-            "http://127.0.0.1:666/account/pwdmodify",
-            this.$qs.stringify(this.pwdmodify)
+            "/account/pwdmodify",
+            this.pwdmodify
           )
-          .then(res => {
-            if (res.data) {
-              that.code = res.data.error_code;
-              resolve(that.code);
-            } else {
-              reject(false);
-            }
-          });
-      });
-
-      // let that = this;
-      // this.$axios
-      //   .post(
-      //     "http://127.0.0.1:666/account/pwdmodify",
-      //     this.$qs.stringify(this.pwdmodify)
-      //   )
-      //   .then(res => {
-      //     that.code = res.data.error_code;
-      //   });
+      
     },
     //添加
     submitForm(formName) {
@@ -153,7 +128,7 @@ export default {
           // 如果所有验证通过 valid就是true
           this.pwdmodifyfn().then(v => {
             // console.log(v)
-            if (v === 0) {
+            if (v.error_code === 0) {
               this.$message.success("密码修改成功,2秒后跳转到登录页面");
               window.localStorage.removeItem("accountinfotoken");
               setTimeout(()=>{this.$router.push("/Login");},2000);//2秒后跳转到登录页面

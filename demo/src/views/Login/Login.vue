@@ -136,13 +136,10 @@ export default {
             password: this.loginForm.pass
           };
           // console.log(loginInfo)
-          this.$axios
-            .post(
-              "http://127.0.0.1:666/login/accountlogin",
-              this.$qs.stringify(loginInfo)
-            )
+          this.$http
+            .post("/login/accountlogin", loginInfo)
             .then(res => {
-              let { error_code, reason, token, username } = res.data;
+              let { error_code, reason, token, username } = res;
               if (error_code === 0 && token) {
                 window.localStorage.setItem("accountinfotoken", token); //将token 存储在本地后续以便验证是否登录过
                 window.localStorage.setItem("username", username); //将username 存储在本地

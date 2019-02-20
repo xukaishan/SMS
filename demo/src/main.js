@@ -5,8 +5,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import App from './App.vue';
 import router from './router';
 import http from '@/api/api'
-// import axios from 'axios';
-// import qs from "qs";
+
 // 引入公用样式
 import '@/styles/common.less';
 // 引入图标样式
@@ -18,10 +17,6 @@ Vue.use(ElementUI);
 //挂载封装的axios到vue原型上
 Vue.prototype.$http = http;
 
-// //挂载axios到vue原型上
-// Vue.prototype.$axios = axios;
-// //挂载axios到vue原型上
-// Vue.prototype.$qs = qs;
 //  阻止生产提示
 Vue.config.productionTip = false
 

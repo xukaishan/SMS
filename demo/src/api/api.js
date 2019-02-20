@@ -1,7 +1,18 @@
+
+//=======================封装一个axios对象=====================================
 //引入axios 和qs
 import axios from 'axios';
 import qs from 'qs';
-axios.defaults.baseURL('');
+// 设置默认请求服务器根目录
+axios.defaults.baseURL = 'http://172.16.9.244:666';
+
+// 写一个axios的请求拦截器 （在axios请求发送之前 搞点事情）
+axios.interceptors.request.use(config=>{
+    const token= window.localStorage.getItem('accountinfotoken');
+    // 在请求头中携带token
+    config.headers.authorization = `Bearer ${token}`;
+    return config;
+})
 //暴露封装的axios方法
 export default {
     get(url,params={}){

@@ -7,7 +7,7 @@
       <div class="text item">
         <!-- 功能条 -->
         <div class="toolsbox">
-          <el-button @click="reverseElection(multipleSelection)" size="small" type="primary">反选</el-button>
+          <el-button @click="reverseElection()" size="small" type="primary">反选</el-button>
           <el-button @click="toggleSelection()" size="small" type="primary">取消选择</el-button>
           <el-button @click="addUser" size="small" type="primary">添加账号</el-button>
           <el-button @click="batchDeletion" size="small" type="primary">批量删除</el-button>
@@ -123,6 +123,7 @@ export default {
       pageSize: 5,
       total: 0,
       tableData: [],
+      params:{},
       //多选数组，包含多选选中的每一项
       multipleSelection: [],
       //编辑
@@ -150,15 +151,18 @@ export default {
   computed: {
     computeddataUrl() {
       if (this.search_words && this.is_search) {
-        this.dataUrl = `http://127.0.0.1:666/account/AccountListByPage?pageSize=${
-          this.pageSize
-        }&currentPage=${this.currentPage}&search=${this.search_words}`;
-      } else {
-        this.dataUrl = `http://127.0.0.1:666/account/AccountListByPage?pageSize=${
-          this.pageSize
-        }&currentPage=${this.currentPage}`;
+         this.params={
+          pageSize:this.pageSize,
+          currentPage:this.currentPage,
+          search:this.search_words
+        }
+      } else { 
+        this.params={
+          pageSize:this.pageSize,
+          currentPage:this.currentPage,
+        }
       }
-      return this.dataUrl;
+      return this.params;
     },
 
     //前端过滤表格数据,之前是做的前端搜索，改为后端搜索
@@ -183,12 +187,11 @@ export default {
   methods: {
     //发送请求获取账号列表数据=========================================
     getData() {
-      this.$axios
-        .get(this.computeddataUrl)
+      this.$http.get('/account/AccountListByPage',this.computeddataUrl)
         .then(res => {
           // console.log(res.data);
-          this.tableData = res.data.data;
-          this.total = res.data.total;
+          this.tableData = res.data;
+          this.total = res.total;
           //解决删除每页最后一条数据不跳转到前一页的问题
           if (!this.tableData.length && this.currentPage != 1) {
             this.currentPage -= 1;
@@ -202,8 +205,10 @@ export default {
 
     //功能栏
     //反选============================================================
-    reverseElection(rows) {
-      this.$refs.multipleTable.toggleRowSelection(this.multipleSelection);
+    reverseElection() {  
+      this.computeddata.forEach(v=>{
+        this.$refs.multipleTable.toggleRowSelection(v)
+      })
     },
 
     //搜索========================================================
@@ -258,13 +263,9 @@ export default {
       })
         .then(() => {
           //发送给后台id集合
-          this.$axios
-            .post(
-              "http://127.0.0.1:666/account/batchdelaccount",
-              this.$qs.stringify({ delIdStr })
-            )
+          this.$http.post("/account/batchdelaccount",{ delIdStr })
             .then(res => {
-              let { error_code, reason } = res.data;
+              let { error_code, reason } = res;
               if (error_code === 0) {
                 this.$message.success(reason);
                 //重新获取数据
@@ -304,13 +305,10 @@ export default {
       this.$refs[formname].validate(valid => {
         if (valid) {
           //收集修改后的数据包括id发送给后台
-          this.$axios
-            .post(
-              "http://127.0.0.1:666/account/saveedit",
-              this.$qs.stringify(this.accounteditForm)
-            )
+          this.$http
+            .post("/account/saveedit",this.accounteditForm)
             .then(res => {
-              let { error_code, reason } = res.data;
+              let { error_code, reason } = res;
               if (error_code === 0) {
                 //隐藏模态框
                 this.flag = false;
@@ -340,10 +338,10 @@ export default {
       })
         .then(() => {
           //发送给后台
-          this.$axios
-            .get(`http://127.0.0.1:666/account/delaccount?id=${id}`)
+          this.$http
+            .get(`/account/delaccount`,{id})
             .then(res => {
-              let { error_code, reason } = res.data;
+              let { error_code, reason } = res;
               if (error_code === 0) {
                 this.$message.success(reason);
                 //重新获取数据

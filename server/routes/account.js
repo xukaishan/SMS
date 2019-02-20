@@ -6,13 +6,35 @@ const router = express.Router();
 
 // 引入连接数据库模块
 const connection = require('./connect')
+// 引入express-jwt 用于验证token
+const expressJwt = require('express-jwt');
+// 定义秘钥
+const secretKey = 'accountinfopwd';
+
 
 // 统一设置响应头 解决跨域问题
 router.all('*', (req, res, next) => {
   // 设置响应头 解决跨域(目前最主流的方式)
+  // 允许的域
   res.header('Access-Control-Allow-Origin', '*');
+  // 允许的请求头
+  res.header("Access-Control-Allow-Headers", "authorization");
   next();
 })
+
+// 使用模块 express-jwt 验证token
+router.use(expressJwt ({
+  secret:  secretKey 
+}));
+
+//拦截器
+router.use( (err, req, res, next) => {
+  //当token验证失败时会抛出如下错误
+  if (err.name === 'UnauthorizedError') {   
+      //这个需要根据自己的业务逻辑来处理
+      res.status(401).send('无效的token 未授权...');
+  }
+});
 
 
 
@@ -27,19 +49,38 @@ router.post('/addaccount', (req, res) => {
   // console.log('接收到前端发送过来的数据：', username, password, usergroup)
   // 把数据存入数据库
   // 构造增加账号的sql语句
-  const sqlStr = `insert into accountdata(username, password, usergroup) values('${username}', '${password}', '${usergroup}')`;
-  // 执行sql语句
-  connection.query(sqlStr, (err, data) => {
-    if (err) throw err;
-    // 判断受影响的行数
-    if (data.affectedRows > 0) {
-      // 如果大于0 代表插入成功 那么就给前端返回成功的数据对象
-      res.send({ "error_code": 0, "reason": "插入数据成功" });
-    } else {
-      // 失败：返回给前端失败的数据对象
-      res.send({ "error_code": 1, "reason": "插入数据失败" });
-    }
-  })
+
+  if(username&&!password||!usergroup){
+    const sqlStr = `select username from accountdata where username='${username}'`;
+    // 执行sql语句
+    connection.query(sqlStr, (err, data) => {
+      if (err) throw err;
+      // 判断受影响的行数
+      if (data.length) {
+        // 如果有 那么就给前端返回用户名已存在的数据对象
+        res.send({ "error_code": 1, "reason": "用户名已存在，亲，这边建议您换一个哦" });
+      } else {
+        // 失败：返回给前端失败的数据对象
+        res.send({ "error_code": 0, "reason": "用户名验证通过" });
+      }
+    })
+  }else{
+    const sqlStr = `insert into accountdata(username, password, usergroup) values('${username}', '${password}', '${usergroup}')`;
+    // 执行sql语句
+    connection.query(sqlStr, (err, data) => {
+      if (err) throw err;
+      // 判断受影响的行数
+      if (data.affectedRows > 0) {
+        // 如果大于0 代表插入成功 那么就给前端返回成功的数据对象
+        res.send({ "error_code": 0, "reason": "插入数据成功" });
+      } else {
+        // 失败：返回给前端失败的数据对象
+        res.send({ "error_code": 1, "reason": "插入数据失败" });
+      }
+    })
+  };
+
+
 })
 
 
