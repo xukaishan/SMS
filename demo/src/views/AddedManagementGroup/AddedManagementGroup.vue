@@ -1,6 +1,6 @@
 <template>
     <div class="">
-        this is 6
+    this is AddedManagementGroup Page
     </div>
 </template>
 

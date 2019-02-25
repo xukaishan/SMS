@@ -22,8 +22,13 @@ Vue.config.productionTip = false
 
 //拦截所有路由（路由守卫）
 router.beforeEach((to, from, next) => {
+  const role = window.localStorage.getItem('username')//简单模拟用户
   if(window.localStorage.getItem('accountinfotoken')){//判断是否含有token（检查登录状态）
-      next()
+      if(role==='admin'){
+        next()
+      }else{
+        to.path==='/AddAccount'? next({path:'/RightsTest'}):next()
+      }
   }else{
       to.path==='/Login'? next():next({path:'/Login'})
   }

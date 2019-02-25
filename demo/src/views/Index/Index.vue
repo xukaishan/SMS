@@ -7,7 +7,10 @@
         <!-- 右侧头部 -->
         <el-header><Top></Top></el-header>
         <!-- 右侧中间内容 -->
-        <el-main><!-- 路由出口 --><router-view/></el-main>
+        <el-main><!-- 路由出口 -->
+        <Tags></Tags>
+        <keep-alive><router-view/></keep-alive>
+        </el-main>
         <!-- 右侧底部 -->
         <el-footer><Bottom></Bottom></el-footer>
       </el-container>
@@ -19,13 +22,16 @@
 import Nav from '@/components/Nav/Nav.vue';
 import Top from '@/components/Top/Top.vue';
 import Bottom from '@/components/Bottom/Bottom.vue';
+import Tags from '@/components/Tags/Tags.vue';
+
 
 
 export default {
     components:{//注册组件
         Nav,
         Top,
-        Bottom
+        Bottom,
+        Tags
     }
 };
 </script>
@@ -55,7 +61,7 @@ export default {
         .el-main {
             background-color: #E9EEF3;
             color: #333;
-            // line-height: 160px;
+            padding-top:10px; 
             .el-card__header{
                 font-weight: 800;
                 background-color: #f4f4f5

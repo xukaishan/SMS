@@ -10,6 +10,7 @@
         :rules="loginRules"
         ref="loginForm"
         class="demo-ruleForm"
+        @keyup.enter.native="submitForm('loginForm')"
       >
         <!-- 账户 -->
         <el-form-item prop="Account">

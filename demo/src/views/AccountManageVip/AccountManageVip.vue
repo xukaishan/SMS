@@ -1,6 +1,6 @@
 <template>
     <div class="">
-        this is 2
+        AccountManageVip
     </div>
 </template>
 

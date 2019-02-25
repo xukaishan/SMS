@@ -1,6 +1,6 @@
 <template>
     <div class="">
-        this is 8
+        this is AddInventory Page
     </div>
 </template>
 

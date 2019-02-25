@@ -165,6 +165,7 @@ export default {
               if (error_code === 0) {
                 this.$message.success(reason);
                 this.$router.push("/AccountManage");
+                
               } else {
                 this.$message.error(reason);
               }
@@ -182,6 +183,8 @@ export default {
     resetForm(formName) {
       // this.$refs.accountAddForm.resetFields() 获取整个表单组件 调用重置方法
       this.$refs[formName].resetFields();
+       console.log('路径',this.$route)
+      
     }
   }
 };

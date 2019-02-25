@@ -1,6 +1,6 @@
 <template>
     <div class="">
-        this is 14
+        this is RightsManagement
     </div>
 </template>
 

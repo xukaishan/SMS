@@ -1,6 +1,6 @@
 <template>
     <div class="">
-        进货统计
+        ShipmentStatistics
     </div>
 </template>
 

@@ -90,6 +90,7 @@ export default {
         }
         .user-col {
           width: 140px;
+          height: 60px;
         }
       }
       .el-dropdown-link {

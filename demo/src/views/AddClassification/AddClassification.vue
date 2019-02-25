@@ -1,6 +1,6 @@
 <template>
     <div class="">
-        this is 5
+        this is AddClassification Page
     </div>
 </template>
 
