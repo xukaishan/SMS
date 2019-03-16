@@ -4,7 +4,7 @@
 import axios from 'axios';
 import qs from 'qs';
 // 设置默认请求服务器根目录
-axios.defaults.baseURL = 'http://172.16.9.244:666';
+axios.defaults.baseURL = 'http://127.0.0.1:666';
 
 // 写一个axios的请求拦截器 （在axios请求发送之前 搞点事情）
 axios.interceptors.request.use(config=>{

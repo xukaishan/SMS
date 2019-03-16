@@ -7,7 +7,7 @@
       closable
       @close="handleClose(tag,index)"
       @click="handleClick(tag,index)"
-      :color="computedcolor"
+      :class="{active:isActive(tag)}"
     >{{tag.title}}</el-tag>
   </div>
 </template>
@@ -33,9 +33,7 @@ export default {
     }
   },
   computed:{
-    computedcolor(tag){
-      console.log(tag)
-    }
+   
   },
   methods: {
     settags(tagobj, path) {
@@ -52,11 +50,8 @@ export default {
         }
       }
     },
-    isActive(path) {
-      // console.log('节点',this.$refs.tagele); 
-      this.tagArr.forEach(v=>{
-        // console.log(v)
-      })
+    isActive(tag) {
+     console.log(tag)
     },
     handleClose(tag, index) {
       // console.log(tag, index);

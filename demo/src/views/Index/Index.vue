@@ -7,9 +7,9 @@
         <!-- 右侧头部 -->
         <el-header><Top></Top></el-header>
         <!-- 右侧中间内容 -->
-        <el-main><!-- 路由出口 -->
+        <el-main>
         <Tags></Tags>
-        <keep-alive><router-view/></keep-alive>
+        <keep-alive><router-view/></keep-alive><!-- 路由出口 -->
         </el-main>
         <!-- 右侧底部 -->
         <el-footer><Bottom></Bottom></el-footer>
