@@ -1,2 +1,2 @@
 # SMS
-Management System based on vue+axios+element-ui+nodejs+mysql
+Admin System based on vue+axios+element-ui+nodejs+mysql
